@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom"; // Import Link and useLocation
 import logo from "../../assets/logo-2.jpg";
 import { FaAngleDown, FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,9 +8,10 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showServices, setShowServices] = useState(false);
   const [showCourses, setShowCourses] = useState(false);
+  const location = useLocation(); // Get the current route
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
-
+  const navigate = useNavigate();
   // Animation variants for mobile menu
   const menuVariants = {
     closed: {
@@ -87,14 +89,30 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-8 items-center font-semibold text-lg">
-          <li className="hover:text-cyan-400 transition-colors duration-300 cursor-pointer">
-            Home
-          </li>
-          <li className="hover:text-cyan-400 transition-colors duration-300 cursor-pointer">
-            About Us
+          <li
+            className={`${
+              location.pathname === "/"
+                ? "text-cyan-500"
+                : "hover:text-cyan-400"
+            } transition-colors duration-300 cursor-pointer`}
+          >
+            <Link to="/">Home</Link>
           </li>
           <li
-            className="relative hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
+            className={`${
+              location.pathname === "/about"
+                ? "text-cyan-500"
+                : "hover:text-cyan-400"
+            } transition-colors duration-300 cursor-pointer`}
+          >
+            <Link to="/about">About Us</Link>
+          </li>
+          <li
+            className={`relative ${
+              location.pathname === "/services"
+                ? "text-cyan-500"
+                : "hover:text-cyan-400"
+            } transition-colors duration-300 cursor-pointer`}
             onMouseEnter={() => setShowServices(true)}
             onMouseLeave={() => setShowServices(false)}
           >
@@ -111,7 +129,7 @@ const Navbar = () => {
                   transition={{ duration: 0.2 }}
                 >
                   {[
-                    "EDA",
+                    "EDA (Exploratory Data Analysis)",
                     "Use Case Building",
                     "ML Model Development",
                     "Data Gathering",
@@ -123,6 +141,7 @@ const Navbar = () => {
                   ].map((service, index) => (
                     <motion.li
                       key={index}
+                      onClick={() => navigate(`/services/${service}`)}
                       className="hover:text-cyan-500 transition-colors duration-200"
                       initial={{ opacity: 0, x: -5 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -136,7 +155,11 @@ const Navbar = () => {
             </AnimatePresence>
           </li>
           <li
-            className="relative hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
+            className={`relative ${
+              location.pathname === "/courses"
+                ? "text-cyan-500"
+                : "hover:text-cyan-400"
+            } transition-colors duration-300 cursor-pointer`}
             onMouseEnter={() => setShowCourses(true)}
             onMouseLeave={() => setShowCourses(false)}
           >
@@ -153,18 +176,19 @@ const Navbar = () => {
                   transition={{ duration: 0.2 }}
                 >
                   {[
-                    "AI for Office",
-                    "Cloud Computing",
+                    "AI for Making Office Tasks Easy",
+                    "Cloud Computing Essential",
                     "Machine Learning",
                     "Data Science",
                     "Generative AI",
-                    "Python",
-                    "Remote Sensing",
-                    "NLP",
+                    "Python for All",
+                    "Remote Sensing and GIS",
+                    "Natural Language Processing (NLP)",
                     "Computer Vision",
                   ].map((course, index) => (
                     <motion.li
                       key={index}
+                      onClick={() => navigate(`/courses/${course}`)}
                       className="hover:text-cyan-500 transition-colors duration-200"
                       initial={{ opacity: 0, x: -5 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -177,11 +201,23 @@ const Navbar = () => {
               )}
             </AnimatePresence>
           </li>
-          <li className="hover:text-cyan-400 transition-colors duration-300 cursor-pointer">
-            Gallery
+          <li
+            className={`${
+              location.pathname === "/gallery"
+                ? "text-cyan-500"
+                : "hover:text-cyan-400"
+            } transition-colors duration-300 cursor-pointer`}
+          >
+            <Link to="/gallery">Gallery</Link>
           </li>
-          <li className="hover:text-cyan-400 transition-colors duration-300 cursor-pointer">
-            Contact Us
+          <li
+            className={`${
+              location.pathname === "/contact"
+                ? "text-cyan-500"
+                : "hover:text-cyan-400"
+            } transition-colors duration-300 cursor-pointer`}
+          >
+            <Link to="/contact">Contact Us</Link>
           </li>
         </ul>
 
@@ -251,17 +287,23 @@ const Navbar = () => {
             {/* Menu Items */}
             <ul className="space-y-5 font-semibold text-lg">
               <motion.li
-                className="text-cyan-400 cursor-pointer"
+                className={`${
+                  location.pathname === "/" ? "text-cyan-500" : "text-cyan-400"
+                } cursor-pointer`}
                 variants={menuItemVariants}
               >
-                Home
+                <Link to="/">Home</Link>
               </motion.li>
 
               <motion.li
-                className="text-white hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
+                className={`${
+                  location.pathname === "/about"
+                    ? "text-cyan-500"
+                    : "text-white hover:text-cyan-400"
+                } transition-colors duration-300 cursor-pointer`}
                 variants={menuItemVariants}
               >
-                About Us
+                <Link to="/about">About Us</Link>
               </motion.li>
 
               {/* Services dropdown */}
@@ -367,17 +409,25 @@ const Navbar = () => {
               </motion.li>
 
               <motion.li
-                className="text-white hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
+                className={`${
+                  location.pathname === "/gallery"
+                    ? "text-cyan-500"
+                    : "text-white hover:text-cyan-400"
+                } transition-colors duration-300 cursor-pointer`}
                 variants={menuItemVariants}
               >
-                Gallery
+                <Link to="/gallery">Gallery</Link>
               </motion.li>
 
               <motion.li
-                className="text-white hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
+                className={`${
+                  location.pathname === "/contact"
+                    ? "text-cyan-500"
+                    : "text-white hover:text-cyan-400"
+                } transition-colors duration-300 cursor-pointer`}
                 variants={menuItemVariants}
               >
-                Contact Us
+                <Link to="/contact">Contact Us</Link>
               </motion.li>
 
               <motion.li variants={menuItemVariants}>

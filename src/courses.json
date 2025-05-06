@@ -1,0 +1,302 @@
+{
+  "courses": [
+    {
+      "title": "AI for Making Office Tasks Easy",
+      "heading": "Office Genie: AI-Powered Productivity for Modern Workplaces",
+      "description": "Boost office productivity with this AI-driven course designed to automate repetitive tasks and implement smart solutions like document summarization and scheduling. Learn to build a custom AI assistant through real-world projects such as task schedulers and invoice processors. Enjoy 80% hands-on training, certification, and access to advanced AI tools like Power Automate and Notion AI.",
+      "Tools and Technologies": [
+        "Power Automate",
+        "Notion AI",
+        "ChatGPT",
+        "Python"
+      ],
+      "modules": [
+        {
+          "title": "AI Basics for Productivity",
+          "description": ["Discovering AI-powered office tools.", "Introduction to workflow automation."],
+          "duration": "4 hours"
+        },
+        {
+          "title": "AI Automations for Repetitive Tasks",
+          "description": ["Email prioritization with AI.", "Calendar and meeting automation."],
+          "duration": "4 hours"
+        },
+        {
+          "title": "Building Custom AI Assistants",
+          "description": ["Chatbot creation using pre-trained models.", "Excel and report automation using Python."],
+          "duration": "12 hours"
+        },
+        {
+          "title": "AI in Action: Real-Time Projects",
+          "description": ["Create an AI-driven office workflow solution."],
+          "duration": "16 hours"
+        }
+      ]
+    },
+    {
+      "title": "Cloud Computing Essential",
+      "heading": "Cloud 360:Mastering Modern Cloud Solutions",
+      "description": "Gain essential cloud computing skills with this practical course. Learn to understand cloud infrastructure, deploy secure applications, and automate workflows using cloud DevOps tools. Work on real-world projects like web app deployment and file-sharing systems. Includes certification, credentials for AWS/Azure/Google Cloud, and access to cloud labs for hands-on training.",
+      "Tools and Technologies": [
+        "AWS",
+        "Microsoft Azure",
+        "Google Cloud",
+        "Terraform",
+        "Kubernetes"
+      ],
+      "modules": [
+        {
+          "title": "Foundations of Cloud Mastery",
+          "description": ["Introduction to cloud services and trends.", "Understanding cloud service models (IaaS, PaaS, SaaS)."],
+          "duration": "6 hours"
+        },
+        {
+          "title": "Cloud Storage and Databases",
+          "description": ["Setting up cloud storage.", "Working with cloud databases."],
+          "duration": "8 hours"
+        },
+        {
+          "title": "Serverless Computing",
+          "description": ["Introduction to serverless architecture.", "Deploying serverless applications."],
+          "duration": "10 hours"
+        },
+        {
+          "title": "Cloud Security and Best Practices",
+          "description": ["Implementing cloud security measures.", "Best practices for cloud deployments."],
+          "duration": "12 hours"
+        }
+      ]
+    },
+    {
+      "title": "Machine Learning",
+      "heading": "ML Prodigy: Mastering Predictive Models and Algorithms",
+      "description": "Master machine learning algorithms and build predictive models. This course includes supervised and unsupervised learning, deep learning basics, and real-world ML projects.",
+      "Tools and Technologies": [
+        "Scikit-learn",
+        "TensorFlow",
+        "Keras",
+        "Python"
+      ],
+      "modules": [
+        {
+          "title": "Supervised Learning",
+          "description": ["Linear regression and classification.", "Decision trees and random forests."],
+          "duration": "8 hours"
+        },
+        {
+          "title": "Unsupervised Learning",
+          "description": ["Clustering algorithms.", "Dimensionality reduction techniques."],
+          "duration": "6 hours"
+        },
+        {
+          "title": "Deep Learning Basics",
+          "description": ["Introduction to neural networks.", "Building simple deep learning models."],
+          "duration": "10 hours"
+        },
+        {
+          "title": "Real-World ML Projects",
+          "description": ["End-to-end ML project implementation.", "Deploying ML models."],
+          "duration": "12 hours"
+        }
+      ]
+    },
+    {
+      "title": "Data Science",
+      "heading": "Data Wizardry: Transforming Data into Actionable Insights",
+      "description": "Analyze and visualize data to derive actionable insights. This course covers data wrangling, exploratory data analysis, statistical modeling, and data visualization.",
+      "Tools and Technologies": [
+        "Pandas",
+        "NumPy",
+        "Matplotlib",
+        "Tableau"
+      ],
+      "modules": [
+        {
+          "title": "Data Wrangling and Cleaning",
+          "description": ["Handling missing data.", "Data transformation techniques."],
+          "duration": "6 hours"
+        },
+        {
+          "title": "Exploratory Data Analysis",
+          "description": ["Descriptive statistics.", "Data visualization techniques."],
+          "duration": "8 hours"
+        },
+        {
+          "title": "Statistical Modeling",
+          "description": ["Hypothesis testing.", "Regression analysis."],
+          "duration": "10 hours"
+        },
+        {
+          "title": "Data Visualization with Python",
+          "description": ["Creating visualizations with Matplotlib.", "Interactive dashboards with Tableau."],
+          "duration": "12 hours"
+        }
+      ]
+    },
+    {
+      "title": "Generative AI",
+      "heading": "Creative AI: Unlocking the Power of Generative Models",
+      "description": "Explore generative models like GANs and create AI-generated content. This course includes text and image generation, GANs, and real-world applications.",
+      "Tools and Technologies": [
+        "GANs",
+        "PyTorch",
+        "OpenAI GPT",
+        "DALL-E"
+      ],
+      "modules": [
+        {
+          "title": "Introduction to Generative Models",
+          "description": ["Understanding generative models.", "Applications of generative AI."],
+          "duration": "6 hours"
+        },
+        {
+          "title": "GANs and Variational Autoencoders",
+          "description": ["Building GANs.", "Working with VAEs."],
+          "duration": "10 hours"
+        },
+        {
+          "title": "Text and Image Generation",
+          "description": ["Generating text with GPT.", "Creating images with DALL-E."],
+          "duration": "8 hours"
+        },
+        {
+          "title": "Generative AI Applications",
+          "description": ["Real-world use cases of generative AI.", "Deploying generative models."],
+          "duration": "12 hours"
+        }
+      ]
+    },
+    {
+      "title": "Python for All",
+      "heading": "Python Mastery: From Basics to Advanced Applications",
+      "description": "Learn Python programming from basics to advanced concepts. This course includes object-oriented programming, data analysis, and web development with Flask/Django.",
+      "Tools and Technologies": [
+        "Python",
+        "Flask",
+        "Django",
+        "Pandas"
+      ],
+      "modules": [
+        {
+          "title": "Python Basics",
+          "description": ["Introduction to Python syntax.", "Basic programming constructs."],
+          "duration": "6 hours"
+        },
+        {
+          "title": "Object-Oriented Programming",
+          "description": ["Classes and objects.", "Inheritance and polymorphism."],
+          "duration": "8 hours"
+        },
+        {
+          "title": "Data Analysis with Python",
+          "description": ["Data manipulation with Pandas.", "Data visualization with Matplotlib."],
+          "duration": "10 hours"
+        },
+        {
+          "title": "Web Development with Flask/Django",
+          "description": ["Building web applications with Flask.", "Introduction to Django framework."],
+          "duration": "12 hours"
+        }
+      ]
+    },
+    {
+      "title": "Remote Sensing and GIS",
+      "heading": "Earth Insights: Mastering Remote Sensing Technologies",
+      "description": "Understand remote sensing technologies and their applications. This course covers satellite image processing, GIS integration, and real-world applications.",
+      "Tools and Technologies": [
+        "QGIS",
+        "ArcGIS",
+        "Python",
+        "Satellite Imagery"
+      ],
+      "modules": [
+        {
+          "title": "Introduction to Remote Sensing",
+          "description": ["Basics of remote sensing.", "Types of remote sensing technologies."],
+          "duration": "6 hours"
+        },
+        {
+          "title": "Satellite Image Processing",
+          "description": ["Image preprocessing techniques.", "Feature extraction from satellite images."],
+          "duration": "8 hours"
+        },
+        {
+          "title": "GIS Integration",
+          "description": ["Integrating remote sensing data with GIS.", "Spatial analysis techniques."],
+          "duration": "10 hours"
+        },
+        {
+          "title": "Remote Sensing Applications",
+          "description": ["Applications in agriculture.", "Environmental monitoring and urban planning."],
+          "duration": "12 hours"
+        }
+      ]
+    },
+    {
+      "title": "Natural Language Processing (NLP)",
+      "heading": "Language AI: Building Text-Based Applications",
+      "description": "Dive into natural language processing and build text-based applications. This course includes text preprocessing, sentiment analysis, and language models.",
+      "Tools and Technologies": [
+        "NLTK",
+        "SpaCy",
+        "Hugging Face Transformers",
+        "Python"
+      ],
+      "modules": [
+        {
+          "title": "Text Preprocessing",
+          "description": ["Tokenization and stemming.", "Removing stop words and text normalization."],
+          "duration": "6 hours"
+        },
+        {
+          "title": "Sentiment Analysis",
+          "description": ["Building sentiment analysis models.", "Using pre-trained sentiment analysis tools."],
+          "duration": "8 hours"
+        },
+        {
+          "title": "Language Models",
+          "description": ["Introduction to language models.", "Fine-tuning pre-trained models."],
+          "duration": "10 hours"
+        },
+        {
+          "title": "NLP Applications",
+          "description": ["Building chatbots.", "Text summarization and translation."],
+          "duration": "12 hours"
+        }
+      ]
+    },
+    {
+      "title": "Computer Vision",
+      "heading": "Vision AI: Mastering Image Analysis and Processing",
+      "description": "Learn computer vision techniques to analyze and process images. This course includes image processing basics, object detection, and deep learning for vision.",
+      "Tools and Technologies": [
+        "OpenCV",
+        "TensorFlow",
+        "Keras",
+        "Python"
+      ],
+      "modules": [
+        {
+          "title": "Image Processing Basics",
+          "description": ["Image filtering and transformations.", "Edge detection and segmentation."],
+          "duration": "6 hours"
+        },
+        {
+          "title": "Object Detection and Recognition",
+          "description": ["Building object detection models.", "Face recognition techniques."],
+          "duration": "8 hours"
+        },
+        {
+          "title": "Deep Learning for Vision",
+          "description": ["Convolutional neural networks.", "Transfer learning for vision tasks."],
+          "duration": "10 hours"
+        },
+        {
+          "title": "Computer Vision Applications",
+          "description": ["Applications in healthcare.", "Autonomous vehicles and surveillance."],
+          "duration": "12 hours"
+        }
+      ]
+    }
+  ]
+}

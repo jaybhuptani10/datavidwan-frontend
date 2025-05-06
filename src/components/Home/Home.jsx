@@ -5,6 +5,11 @@ import Aivisualization from "./Aivisualization";
 import OurServices from "./OurServices";
 import TrainingPage from "./training";
 import OurExpertise from "./OurExpertise";
+import ContactPage from "../ContactPage";
+import ContactSection from "./ContactSection";
+
+import BlogsSection from "./BlogsSection";
+import Footer from "./Footer";
 
 const Home = () => {
   const [animateGraph, setAnimateGraph] = useState(false);
@@ -31,8 +36,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900">
-      <Navbar />
-
       {/* Hero Section */}
       <div className="w-full min-h-screen flex flex-col md:flex-row text-white relative overflow-hidden">
         {/* Animated background particles */}
@@ -182,6 +185,12 @@ const Home = () => {
       <TrainingPage />
       {/* Our Expertise */}
       <OurExpertise />
+      {/* Contact Section */}
+      <ContactSection />
+      {/* BLogs Section */}
+      <BlogsSection />
+      {/* Footer Section */}
+      <Footer />
     </div>
   );
 };
