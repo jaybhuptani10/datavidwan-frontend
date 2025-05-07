@@ -13,8 +13,10 @@ import {
   Lock,
   Award,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Service = () => {
+  const navigate = useNavigate();
   // List of services with their descriptions and icons
   const services = [
     {
@@ -243,7 +245,10 @@ const Service = () => {
                   </ul>
                 </div>
 
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-lg transition-colors duration-300 flex items-center">
+                <button
+                  onClick={() => navigate(`/services/${selectedService.title}`)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-lg transition-colors duration-300 flex items-center"
+                >
                   Request a Consultation
                   <ChevronRight size={18} className="ml-2" />
                 </button>
