@@ -8,6 +8,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showServices, setShowServices] = useState(false);
   const [showCourses, setShowCourses] = useState(false);
+  const [showBlogs, setShowBlogs] = useState(false);
   const location = useLocation(); // Get the current route
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -195,6 +196,47 @@ const Navbar = () => {
                       transition={{ delay: index * 0.03 }}
                     >
                       {course}
+                    </motion.li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </li>
+          <li
+            className={`relative ${
+              location.pathname === "/blogs"
+                ? "text-cyan-500"
+                : "hover:text-cyan-400"
+            } transition-colors duration-300 cursor-pointer`}
+            onMouseEnter={() => setShowBlogs(true)}
+            onMouseLeave={() => setShowBlogs(false)}
+          >
+            <button className="flex items-center justify-between w-full">
+              Blogs <FaAngleDown className="ml-1 text-sm" />
+            </button>
+            <AnimatePresence>
+              {showBlogs && (
+                <motion.ul
+                  className="absolute top-full w-72 left-0 bg-white text-gray-800 shadow-lg mt-2 rounded-2xl p-5 pl-4 space-y-1 text-lg"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {[
+                    { label: "ViewBlogs", path: "/blogs/view" },
+                    { label: "Create Blog", path: "/blogs/create" },
+                    { label: "My blog", path: "/blogs/my" },
+                  ].map((item, index) => (
+                    <motion.li
+                      key={index}
+                      onClick={() => navigate(item.path)}
+                      className="hover:text-cyan-500 transition-colors duration-200"
+                      initial={{ opacity: 0, x: -5 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                    >
+                      {item.label}
                     </motion.li>
                   ))}
                 </motion.ul>
@@ -401,6 +443,54 @@ const Navbar = () => {
                           transition={{ delay: index * 0.05 }}
                         >
                           {course}
+                        </motion.li>
+                      ))}
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
+              </motion.li>
+
+              {/* Blogs dropdown */}
+              <motion.li variants={menuItemVariants}>
+                <motion.button
+                  onClick={() => setShowBlogs(!showBlogs)}
+                  className="flex items-center justify-between w-full text-white hover:text-cyan-400 transition-colors duration-300"
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Blogs
+                  <motion.div
+                    animate={{ rotate: showBlogs ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <FaAngleDown />
+                  </motion.div>
+                </motion.button>
+                <AnimatePresence>
+                  {showBlogs && (
+                    <motion.ul
+                      className="mt-3 pl-4 space-y-3 text-gray-300"
+                      variants={dropdownVariants}
+                      initial="closed"
+                      animate="open"
+                      exit="closed"
+                    >
+                      {[
+                        { label: "ViewBlogs", path: "/blogs/view" },
+                        { label: "Create Blog", path: "/blogs/create" },
+                        { label: "My blog", path: "/blogs/my" },
+                      ].map((item, index) => (
+                        <motion.li
+                          key={index}
+                          className="hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          onClick={() => {
+                            setMenuOpen(false);
+                            navigate(item.path);
+                          }}
+                        >
+                          {item.label}
                         </motion.li>
                       ))}
                     </motion.ul>
