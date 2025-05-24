@@ -9,7 +9,7 @@ import Service from "./components/Service";
 import Gallery from "./components/Gallery";
 import ContactPage from "./components/ContactPage";
 import Blog from "./components/Blogs/Blog";
-import ViewBlog from "./components/Blogs/viewblog";
+import ViewBlog from "./components/Blogs/ViewBlog";
 import MyBlogs from "./components/Blogs/MyBlogs";
 import CreateBlog from "./components/Blogs/CreateBlog";
 
