@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import RTE from "../RTE";
 
 const CreateBlog = () => {
   const navigate = useNavigate();
@@ -178,7 +179,7 @@ const CreateBlog = () => {
               >
                 Content *
               </label>
-              <textarea
+              {/* <textarea
                 id="content"
                 name="content"
                 value={formData.content}
@@ -187,7 +188,12 @@ const CreateBlog = () => {
                 rows="10"
                 required
                 placeholder="Write your blog post content here"
-              ></textarea>
+              ></textarea> */}
+              <RTE
+                value={formData.content}
+                onChange={(content) => handleInputChange({ target: { name: "content", value: content } })}
+              />
+
             </div>
 
             <div className="flex justify-end">
