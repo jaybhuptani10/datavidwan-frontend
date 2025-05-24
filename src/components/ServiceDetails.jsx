@@ -1,22 +1,50 @@
 import React, { useEffect, useState } from "react";
-import servicesData from "../services.json"; // Import services data from JSON file
 import { useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchServices } from "../store/servicesSlice";
 
-// Note: In your actual application, you'd use react-router-dom's useParams() hook
-// This is a demonstration component that simulates the functionality
 const ServiceDetails = () => {
-  // In a real app, this would be from useParams()
   const { service } = useParams();
-  const decodedService = service; // In a real app, this would be decodeURIComponent(service)
+  const decodedService = decodeURIComponent(service);
+  const dispatch = useDispatch();
+  const {
+    items: services,
+    loading,
+    error,
+  } = useSelector((state) => state.services);
   const [serviceDetails, setServiceDetails] = useState(null);
 
   useEffect(() => {
-    // Find the service details from the JSON data
-    const foundService = servicesData.services.find(
-      (s) => s.title === decodedService
+    if (!services.length) {
+      dispatch(fetchServices());
+    }
+  }, [dispatch, services.length]);
+
+  console.log("Decoded Service:", decodedService);
+  console.log("Available Services:", services);
+  useEffect(() => {
+    if (services.length) {
+      // Match by name (API field)
+      const foundService = services.find((s) => s.name === decodedService);
+      setServiceDetails(foundService);
+    }
+  }, [services, decodedService]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+      </div>
     );
-    setServiceDetails(foundService);
-  }, [decodedService]);
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-600 font-bold">
+        {error}
+      </div>
+    );
+  }
 
   if (!serviceDetails) {
     return (
@@ -99,7 +127,7 @@ const ServiceDetails = () => {
             />
           </svg>
           <span className="text-indigo-800 font-medium">
-            {serviceDetails.title}
+            {serviceDetails.name}
           </span>
         </div>
 
@@ -140,7 +168,7 @@ const ServiceDetails = () => {
               Professional Service
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              {serviceDetails.title}
+              {serviceDetails.name}
             </h1>
 
             {serviceDetails.description && (
@@ -203,18 +231,20 @@ const ServiceDetails = () => {
 
               <div className="space-y-6">
                 {Array.isArray(serviceDetails.description) ? (
-                  serviceDetails.description.map((paragraph, index) => (
-                    <p key={index} className="text-gray-600 leading-relaxed">
-                      {paragraph}
-                    </p>
-                  ))
+                  serviceDetails.description
+                    .slice(1)
+                    .map((paragraph, index) => (
+                      <p key={index} className="text-gray-600 leading-relaxed">
+                        {paragraph}
+                      </p>
+                    ))
                 ) : (
                   <p className="text-gray-600">{serviceDetails.description}</p>
                 )}
               </div>
             </div>
 
-            {/* Process section */}
+            {/* Our Offerings section */}
             <div className="bg-white rounded-2xl shadow-md p-8 transition-all duration-300 hover:shadow-lg">
               <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center">
                 <svg
@@ -228,48 +258,32 @@ const ServiceDetails = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
                   />
                 </svg>
-                Our Process
+                Our Offerings
               </h2>
 
-              <div className="relative">
-                {/* Vertical line */}
-                <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-indigo-100"></div>
-
-                {/* Steps */}
-                <div className="space-y-12">
-                  {[
-                    {
-                      title: "Discovery",
-                      description:
-                        "We analyze your requirements and define project scope",
-                    },
-                    {
-                      title: "Development",
-                      description:
-                        "Our team implements the solution using industry best practices",
-                    },
-                    {
-                      title: "Delivery",
-                      description:
-                        "Final deliverables are presented with comprehensive documentation",
-                    },
-                  ].map((step, index) => (
-                    <div key={index} className="relative flex items-start">
-                      <div className="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 text-indigo-800 font-bold z-10">
-                        {index + 1}
-                      </div>
-                      <div className="ml-6">
-                        <h3 className="text-lg font-semibold text-gray-800">
-                          {step.title}
-                        </h3>
-                        <p className="mt-1 text-gray-600">{step.description}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {serviceDetails.process &&
+                  serviceDetails.process.map((offering, index) => (
+                    <div
+                      key={index}
+                      className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-100 hover:shadow-md transition-all duration-300"
+                    >
+                      <div className="flex items-start">
+                        <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-indigo-500 text-white font-bold flex-shrink-0">
+                          {index + 1}
+                        </div>
+                        <div className="ml-4">
+                          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                            {offering}
+                          </h3>
+                          <div className="w-12 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></div>
+                        </div>
                       </div>
                     </div>
                   ))}
-                </div>
               </div>
             </div>
           </div>
@@ -282,7 +296,7 @@ const ServiceDetails = () => {
                 Ready to get started?
               </h3>
               <p className="text-gray-600 mb-6">
-                Our team is ready to help you implement {serviceDetails.title}{" "}
+                Our team is ready to help you implement {serviceDetails.name}{" "}
                 for your business needs.
               </p>
               <a
@@ -320,32 +334,28 @@ const ServiceDetails = () => {
               </h3>
 
               <ul className="space-y-4">
-                {[
-                  "Faster data-driven decision making",
-                  "Improved accuracy in predictions",
-                  "Clear visualization of complex patterns",
-                  "Cost-effective solutions",
-                ].map((benefit, index) => (
-                  <li key={index} className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 text-green-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <span className="ml-3 text-gray-700">{benefit}</span>
-                  </li>
-                ))}
+                {serviceDetails.benefits &&
+                  serviceDetails.benefits.map((benefit, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 text-green-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <span className="ml-3 text-gray-700">{benefit}</span>
+                    </li>
+                  ))}
               </ul>
             </div>
 

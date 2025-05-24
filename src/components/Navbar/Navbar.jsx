@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom"; // Import Lin
 import logo from "../../assets/logo-2.jpg";
 import { FaAngleDown, FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -10,6 +11,7 @@ const Navbar = () => {
   const [showCourses, setShowCourses] = useState(false);
   const [showBlogs, setShowBlogs] = useState(false);
   const location = useLocation(); // Get the current route
+  const services = useSelector((state) => state.services.items);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const navigate = useNavigate();
@@ -129,28 +131,22 @@ const Navbar = () => {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  {[
-                    "EDA (Exploratory Data Analysis)",
-                    "Use Case Building",
-                    "ML Model Development",
-                    "Data Gathering",
-                    "Cleaning",
-                    "Dashboards",
-                    "Internship",
-                    "Training",
-                    "Computer Vision",
-                  ].map((service, index) => (
-                    <motion.li
-                      key={index}
-                      onClick={() => navigate(`/services/${service}`)}
-                      className="hover:text-cyan-500 transition-colors duration-200"
-                      initial={{ opacity: 0, x: -5 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                    >
-                      {service}
-                    </motion.li>
-                  ))}
+                  {services && services.length > 0 ? (
+                    services.map((service, index) => (
+                      <motion.li
+                        key={service.id}
+                        onClick={() => navigate(`/services/${service.name}`)}
+                        className="hover:text-cyan-500 transition-colors duration-200"
+                        initial={{ opacity: 0, x: -5 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.03 }}
+                      >
+                        {service.name}
+                      </motion.li>
+                    ))
+                  ) : (
+                    <li className="text-gray-400">No services found</li>
+                  )}
                 </motion.ul>
               )}
             </AnimatePresence>
@@ -373,27 +369,21 @@ const Navbar = () => {
                       animate="open"
                       exit="closed"
                     >
-                      {[
-                        "EDA",
-                        "Use Case Building",
-                        "ML Model Development",
-                        "Data Gathering",
-                        "Cleaning",
-                        "Dashboards",
-                        "Internship",
-                        "Training",
-                        "Computer Vision",
-                      ].map((service, index) => (
-                        <motion.li
-                          key={index}
-                          className="hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                        >
-                          {service}
-                        </motion.li>
-                      ))}
+                      {services && services.length > 0 ? (
+                        services.map((service, index) => (
+                          <motion.li
+                            key={service.id}
+                            className="hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            {service.name}
+                          </motion.li>
+                        ))
+                      ) : (
+                        <li className="text-gray-400">No services found</li>
+                      )}
                     </motion.ul>
                   )}
                 </AnimatePresence>

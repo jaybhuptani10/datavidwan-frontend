@@ -1,65 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Grid, X } from "lucide-react";
-
-// This would typically come from an API or data file
-const galleryImages = [
-  {
-    id: 1,
-    title: "Workshop Session",
-    description: "Students collaborating during a hands-on workshop session",
-    url: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    date: "2025-04-25",
-  },
-  {
-    id: 2,
-    title: "Coding Lab",
-    description: "Intensive coding session in our computer lab",
-    url: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    date: "2025-04-20",
-  },
-  {
-    id: 3,
-    title: "Guest Lecture",
-    description: "Industry expert sharing insights with students",
-    url: "https://images.unsplash.com/photo-1602133187081-4874fdbd555c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    date: "2025-04-15",
-  },
-  {
-    id: 4,
-    title: "Student Project",
-    description: "Final project presentation by graduating students",
-    url: "https://images.unsplash.com/photo-1556636530-6b7482d80e3d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    date: "2025-04-10",
-  },
-  {
-    id: 5,
-    title: "Campus Tour",
-    description: "Our modern facilities and learning spaces",
-    url: "https://images.unsplash.com/photo-1635919369625-e6f8ba7681f6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    date: "2025-04-05",
-  },
-  {
-    id: 6,
-    title: "Hackathon",
-    description: "Annual coding competition with amazing prizes",
-    url: "https://images.unsplash.com/photo-1640163561346-7778a2edf353?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    date: "2025-03-30",
-  },
-];
-
-// Sort images by date (most recent first)
-const sortedImages = [...galleryImages].sort(
-  (a, b) => new Date(b.date) - new Date(a.date)
-);
-
-// Get the most recent images for the carousel
-const recentImages = sortedImages.slice(0, 5);
+import { useSelector, useDispatch } from "react-redux";
+import { fetchImages } from "../store/imagesSlice";
 
 const Gallery = () => {
+  const dispatch = useDispatch();
+  const {
+    items: images,
+    loading,
+    error,
+  } = useSelector((state) => state.images);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showAll, setShowAll] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  useEffect(() => {
+    if (!images.length) {
+      dispatch(fetchImages());
+    }
+  }, [dispatch, images.length]);
+
+  // Sort images by date (most recent first)
+  const sortedImages = Array.isArray(images)
+    ? [...images].sort((a, b) => new Date(b.date) - new Date(a.date))
+    : [];
+  const recentImages = sortedImages.slice(0, 5);
 
   // Auto-advance carousel
   useEffect(() => {
@@ -143,7 +109,7 @@ const Gallery = () => {
                     }`}
                   >
                     <img
-                      src={image.url}
+                      src={image.image}
                       alt={image.title}
                       className="w-full h-full object-cover"
                     />
@@ -227,7 +193,7 @@ const Gallery = () => {
                 >
                   <div className="h-48 bg-gray-200">
                     <img
-                      src={image.url}
+                      src={image.image}
                       alt={image.title}
                       className="w-full h-full object-cover"
                     />

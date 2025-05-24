@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Book,
   Headphones,
@@ -12,8 +12,23 @@ import {
 import OurExpertise from "./Home/OurExpertise";
 import logo from "../assets/logo.jpg";
 import Footer from "./Home/Footer";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchTestimonials } from "../store/testimonialsSlice";
 
 export default function AboutUs() {
+  const dispatch = useDispatch();
+  const {
+    items: testimonials,
+    loading: testimonialsLoading,
+    error: testimonialsError,
+  } = useSelector((state) => state.testimonials);
+
+  useEffect(() => {
+    if (!testimonials.length) {
+      dispatch(fetchTestimonials());
+    }
+  }, [dispatch, testimonials.length]);
+  console.log(testimonials);
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Header with Clear Page Indication */}
@@ -315,73 +330,40 @@ export default function AboutUs() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-teal-600 to-teal-700 p-8 rounded-lg shadow-xl hover:transform hover:scale-105 transition-all duration-300">
-              <div className="text-6xl text-teal-300 mb-4">"</div>
-              <p className="italic mb-8 text-white/90">
-                The training program at Datavidwan exceeded all my expectations.
-                The hands-on approach and expert guidance helped me master
-                complex data science concepts quickly and apply them in
-                real-world scenarios.
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-teal-800 rounded-full overflow-hidden border-2 border-teal-400">
-                  <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGVvcGxlfGVufDB8fDB8fHww"
-                    alt="Jessica Hische"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-bold text-lg">Jessica Hische</h4>
-                  <p className="text-teal-200">Data Scientist at TechGlobal</p>
-                </div>
-              </div>
+          {testimonialsLoading ? (
+            <div className="text-center text-white">
+              Loading testimonials...
             </div>
-
-            <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 p-8 rounded-lg shadow-xl hover:transform hover:scale-105 transition-all duration-300">
-              <div className="text-6xl text-indigo-300 mb-4">"</div>
-              <p className="italic mb-8 text-white/90">
-                The internship program provided me with invaluable industry
-                experience. I was able to work on real projects that
-                significantly enhanced my portfolio and career prospects, giving
-                me a competitive edge in the job market.
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-indigo-800 rounded-full overflow-hidden border-2 border-indigo-400">
-                  <img
-                    src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="Devon Lane"
-                  />
+          ) : testimonialsError ? (
+            <div className="text-center text-red-300">{testimonialsError}</div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial, idx) => (
+                <div
+                  key={testimonial._id || idx}
+                  className={`bg-gradient-to-br from-teal-600 to-teal-700 p-8 rounded-lg shadow-xl hover:transform hover:scale-105 transition-all duration-300`}
+                >
+                  <div className="text-6xl text-teal-300 mb-4">"</div>
+                  <p className="italic mb-8 text-white/90">
+                    {testimonial.content}
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-teal-800 rounded-full overflow-hidden border-2 border-teal-400">
+                      <img
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg">{testimonial.name}</h4>
+                      <p className="text-teal-200">{testimonial.designation}</p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-lg">Devon Lane</h4>
-                  <p className="text-indigo-200">ML Engineer at InnovateTech</p>
-                </div>
-              </div>
+              ))}
             </div>
-
-            <div className="bg-gradient-to-br from-purple-600 to-purple-700 p-8 rounded-lg shadow-xl hover:transform hover:scale-105 transition-all duration-300">
-              <div className="text-6xl text-purple-300 mb-4">"</div>
-              <p className="italic mb-8 text-white/90">
-                The instructors at Datavidwan are true experts in their field.
-                Their insights and practical knowledge have been instrumental in
-                accelerating my learning journey and helping me secure my dream
-                job in analytics.
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-purple-800 rounded-full overflow-hidden border-2 border-purple-400">
-                  <img
-                    src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt="Martin Smith"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-bold text-lg">Martin Smith</h4>
-                  <p className="text-purple-200">Analytics Lead at DataDrive</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 

@@ -12,8 +12,14 @@ import Blog from "./components/Blogs/Blog";
 import ViewBlog from "./components/Blogs/ViewBlog";
 import MyBlogs from "./components/Blogs/MyBlogs";
 import CreateBlog from "./components/Blogs/CreateBlog";
+import axios from "axios";
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const App = () => {
+  axios.defaults.baseURL = API_BASE_URL;
+
+  axios.defaults.withCredentials = true;
   return (
     <BrowserRouter>
       <Navbar />
