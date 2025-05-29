@@ -36,6 +36,7 @@ const Service = () => {
   };
 
   const serviceList = Array.isArray(services) ? services : [];
+  console.log("Service List:", serviceList);
 
   if (loading) {
     return (

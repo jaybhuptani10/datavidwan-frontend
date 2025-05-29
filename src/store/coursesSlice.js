@@ -1,12 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const fetchServices = createAsyncThunk(
-  "services/fetchServices",
+export const fetchCourses = createAsyncThunk(
+  "courses/fetchCourses",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/web/services");
-      console.log(response.data.data);
+      const response = await axios.get("/web/courses");
       return response.data.data;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -14,8 +13,8 @@ export const fetchServices = createAsyncThunk(
   }
 );
 
-const servicesSlice = createSlice({
-  name: "services",
+const coursesSlice = createSlice({
+  name: "courses",
   initialState: {
     items: [],
     loading: false,
@@ -24,19 +23,19 @@ const servicesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchServices.pending, (state) => {
+      .addCase(fetchCourses.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchServices.fulfilled, (state, action) => {
+      .addCase(fetchCourses.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload;
       })
-      .addCase(fetchServices.rejected, (state, action) => {
+      .addCase(fetchCourses.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
   },
 });
 
-export default servicesSlice.reducer;
+export default coursesSlice.reducer;

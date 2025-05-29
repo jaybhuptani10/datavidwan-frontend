@@ -1,70 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBlogs } from "../../store/blogsSlice";
 
-// Sample blog data (in a real app, this would come from an API or database)
-const blogPosts = [
-  {
-    id: 1,
-    title: "Getting Started with React",
-    excerpt: "Learn the basics of React and build your first component.",
-    author: "Jane Smith",
-    date: "May 15, 2025",
-    coverImage:
-      "https://images.unsplash.com/photo-1747599309107-20504ba6b8dd?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category: "Web Development",
-  },
-  {
-    id: 2,
-    title: "Advanced CSS Techniques",
-    excerpt:
-      "Dive deep into CSS Grid, Flexbox, and animations for modern web design.",
-    author: "John Doe",
-    date: "May 10, 2025",
-    coverImage:
-      "https://images.unsplash.com/photo-1747396379098-714c21bde6f7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category: "CSS",
-  },
-  {
-    id: 3,
-    title: "State Management in React Apps",
-    excerpt:
-      "Compare different state management solutions for React applications.",
-    author: "Alex Johnson",
-    date: "May 5, 2025",
-    coverImage:
-      "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category: "React",
-  },
-  {
-    id: 4,
-    title: "Building Responsive Layouts",
-    excerpt:
-      "Tips and tricks for creating websites that look great on any device.",
-    author: "Sarah Williams",
-    date: "April 28, 2025",
-    coverImage:
-      "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category: "UI Design",
-  },
-];
-
-// You could export this for use in other components that need blog data
-export const getBlogPosts = () => blogPosts;
-export const getBlogById = (id) =>
-  blogPosts.find((blog) => blog.id === parseInt(id));
+// Helper function to get a blog by ID
+export const getBlogById = (blogs, id) => {
+  return blogs.find((blog) => blog.id === id || blog.id === parseInt(id));
+};
 
 const Blog = () => {
+  const dispatch = useDispatch();
+  const {
+    items: blogPosts,
+    loading,
+    error,
+  } = useSelector((state) => state.blogs);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+
+  useEffect(() => {
+    dispatch(fetchBlogs());
+  }, [dispatch]);
 
   // Extract unique categories for the filter
   const categories = [
     "All",
-    ...new Set(blogPosts.map((post) => post.category)),
+    ...new Set((blogPosts || []).map((post) => post.category)),
   ];
 
   // Filter blogs based on search term and category
-  const filteredBlogs = blogPosts.filter((blog) => {
+  const filteredBlogs = (blogPosts || []).filter((blog) => {
     const matchesSearch =
       blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
@@ -124,47 +89,60 @@ const Blog = () => {
           </div>
         </div>
 
+        {/* Loading and error states */}
+        {loading && (
+          <div className="text-center py-8 text-blue-600 font-semibold">
+            Loading blogs...
+          </div>
+        )}
+        {error && (
+          <div className="text-center py-8 text-red-600 font-semibold">
+            {error}
+          </div>
+        )}
+
         {/* Blog listing */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredBlogs.length > 0 ? (
-            filteredBlogs.map((blog) => (
-              <Link
-                key={blog.id}
-                to={`/blog/${blog.id}`}
-                className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
-              >
-                <img
-                  src={blog.coverImage}
-                  alt={blog.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <span className="text-sm font-semibold text-blue-600">
-                    {blog.category}
-                  </span>
-                  <h2 className="text-xl font-bold mt-2 mb-3 text-gray-800">
-                    {blog.title}
-                  </h2>
-                  <p className="text-gray-600 mb-4">{blog.excerpt}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">
-                      By {blog.author}
+          {!loading && !error && filteredBlogs.length > 0
+            ? filteredBlogs.map((blog) => (
+                <Link
+                  key={blog.id}
+                  to={`/blog/${blog.id}`}
+                  className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                  <img
+                    src={blog.coverImage}
+                    alt={blog.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-6">
+                    <span className="text-sm font-semibold text-blue-600">
+                      {blog.category}
                     </span>
-                    <span className="text-sm text-gray-500">{blog.date}</span>
+                    <h2 className="text-xl font-bold mt-2 mb-3 text-gray-800">
+                      {blog.title}
+                    </h2>
+                    <p className="text-gray-600 mb-4">{blog.excerpt}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">
+                        By {blog.author}
+                      </span>
+                      <span className="text-sm text-gray-500">{blog.date}</span>
+                    </div>
                   </div>
+                </Link>
+              ))
+            : !loading &&
+              !error && (
+                <div className="col-span-full text-center py-16">
+                  <h3 className="text-xl font-medium text-gray-600">
+                    No blog posts found
+                  </h3>
+                  <p className="text-gray-500 mt-2">
+                    Try adjusting your search or filter criteria
+                  </p>
                 </div>
-              </Link>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-16">
-              <h3 className="text-xl font-medium text-gray-600">
-                No blog posts found
-              </h3>
-              <p className="text-gray-500 mt-2">
-                Try adjusting your search or filter criteria
-              </p>
-            </div>
-          )}
+              )}
         </div>
 
         {/* My Blogs link */}

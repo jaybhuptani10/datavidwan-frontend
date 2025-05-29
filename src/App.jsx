@@ -13,6 +13,7 @@ import ViewBlog from "./components/Blogs/ViewBlog";
 import MyBlogs from "./components/Blogs/MyBlogs";
 import CreateBlog from "./components/Blogs/CreateBlog";
 import axios from "axios";
+import AuthPage from "./components/auth/Auth";
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/blogs/create" element={<CreateBlog />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/auth" element={<AuthPage />} />
       </Routes>
     </BrowserRouter>
   );

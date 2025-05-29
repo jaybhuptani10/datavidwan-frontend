@@ -1,32 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getBlogPosts } from "./Blog";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBlogs } from "../../store/blogsSlice";
 
 const MyBlogs = () => {
+  const dispatch = useDispatch();
+  const { items: allBlogs, loading } = useSelector((state) => state.blogs);
   const [myBlogs, setMyBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMyBlogs = async () => {
-      setLoading(true);
-      try {
-        // In a real app, this would be an API call filtered by user ID
-        // For demo purposes, we'll just use all blogs and pretend they're the user's
-        const allBlogs = getBlogPosts();
+    dispatch(fetchBlogs());
+  }, [dispatch]);
 
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        setMyBlogs(allBlogs);
-      } catch (error) {
-        console.error("Error fetching my blogs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMyBlogs();
-  }, []);
+  useEffect(() => {
+    // In a real app, filter by user ID. For now, use all blogs.
+    setMyBlogs(allBlogs);
+  }, [allBlogs]);
 
   const handleDeleteBlog = async (blogId) => {
     if (window.confirm("Are you sure you want to delete this blog post?")) {

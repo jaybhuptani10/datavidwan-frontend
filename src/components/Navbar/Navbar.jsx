@@ -3,7 +3,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom"; // Import Lin
 import logo from "../../assets/logo-2.jpg";
 import { FaAngleDown, FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCourses } from "../../store/coursesSlice";
+import { fetchServices } from "../../store/servicesSlice";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -12,6 +14,22 @@ const Navbar = () => {
   const [showBlogs, setShowBlogs] = useState(false);
   const location = useLocation(); // Get the current route
   const services = useSelector((state) => state.services.items);
+  const courses = useSelector((state) => state.courses.items);
+  const dispatch = useDispatch();
+
+  // Fetch courses if not already loaded
+  React.useEffect(() => {
+    if (!courses.length) {
+      dispatch(fetchCourses());
+    }
+  }, [dispatch, courses.length]);
+
+  // Fetch services if not already loaded
+  React.useEffect(() => {
+    if (!services.length) {
+      dispatch(fetchServices());
+    }
+  }, [dispatch, services.length]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const navigate = useNavigate();
@@ -172,28 +190,22 @@ const Navbar = () => {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  {[
-                    "AI for Making Office Tasks Easy",
-                    "Cloud Computing Essential",
-                    "Machine Learning",
-                    "Data Science",
-                    "Generative AI",
-                    "Python for All",
-                    "Remote Sensing and GIS",
-                    "Natural Language Processing (NLP)",
-                    "Computer Vision",
-                  ].map((course, index) => (
-                    <motion.li
-                      key={index}
-                      onClick={() => navigate(`/courses/${course}`)}
-                      className="hover:text-cyan-500 transition-colors duration-200"
-                      initial={{ opacity: 0, x: -5 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                    >
-                      {course}
-                    </motion.li>
-                  ))}
+                  {courses && courses.length > 0 ? (
+                    courses.map((course, index) => (
+                      <motion.li
+                        key={course.id}
+                        onClick={() => navigate(`/courses/${course.title}`)}
+                        className="hover:text-cyan-500 transition-colors duration-200"
+                        initial={{ opacity: 0, x: -5 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.03 }}
+                      >
+                        {course.title}
+                      </motion.li>
+                    ))
+                  ) : (
+                    <li className="text-gray-400">No courses found</li>
+                  )}
                 </motion.ul>
               )}
             </AnimatePresence>
@@ -414,27 +426,21 @@ const Navbar = () => {
                       animate="open"
                       exit="closed"
                     >
-                      {[
-                        "AI for Office",
-                        "Cloud Computing",
-                        "Machine Learning",
-                        "Data Science",
-                        "Generative AI",
-                        "Python",
-                        "Remote Sensing",
-                        "NLP",
-                        "Computer Vision",
-                      ].map((course, index) => (
-                        <motion.li
-                          key={index}
-                          className="hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                        >
-                          {course}
-                        </motion.li>
-                      ))}
+                      {courses && courses.length > 0 ? (
+                        courses.map((course, index) => (
+                          <motion.li
+                            key={course.id}
+                            className="hover:text-cyan-400 transition-colors duration-300 cursor-pointer"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            {course.title}
+                          </motion.li>
+                        ))
+                      ) : (
+                        <li className="text-gray-400">No courses found</li>
+                      )}
                     </motion.ul>
                   )}
                 </AnimatePresence>
