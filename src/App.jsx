@@ -9,7 +9,7 @@ import Service from "./components/Services/Service";
 import Gallery from "./components/Gallery";
 import ContactPage from "./components/ContactPage";
 import Blog from "./components/Blogs/Blog";
-
+import ViewBlog from "./components/Blogs/ViewBlog";
 import MyBlogs from "./components/Blogs/MyBlogs";
 import CreateBlog from "./components/Blogs/CreateBlog";
 import axios from "axios";
@@ -17,7 +17,6 @@ import AuthPage from "./components/auth/Auth";
 import { useDispatch } from "react-redux";
 import { fetchUserProfile } from "./store/userSlice";
 import Courses from "./components/courses/Courses";
-import ViewBlog from "./components/Blogs/viewblog";
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
