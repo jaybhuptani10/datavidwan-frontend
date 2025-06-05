@@ -29,6 +29,23 @@ const CreateBlog = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
 
+    // Validate all files are JPEG or PNG
+    const invalidFiles = files.filter(
+      (file) => !(file.type === "image/jpeg" || file.type === "image/png")
+    );
+
+    if (invalidFiles.length > 0) {
+      setError("Only JPEG or PNG images are allowed.");
+      // Reset file input
+      e.target.value = null;
+      setFormData({
+        ...formData,
+        images: [],
+      });
+      setPreviewImages([]);
+      return;
+    }
+
     if (files.length > 0) {
       setFormData({
         ...formData,
@@ -120,6 +137,35 @@ const CreateBlog = () => {
     "Data Science",
     "AI/ML",
   ];
+
+  // Redirect or show message if not logged in
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Please login to create a blog post.");
+    }
+  }, []);
+
+  if (error === "Please login to create a blog post.") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white p-8 rounded-lg shadow text-center">
+          <h2 className="text-2xl font-bold text-gray-700 mb-4">
+            Please Login
+          </h2>
+          <p className="text-gray-600 mb-6">
+            You must be logged in to create a blog post.
+          </p>
+          <Link
+            to="/auth"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen py-8 pt-30">
@@ -225,14 +271,14 @@ const CreateBlog = () => {
                 type="file"
                 id="images"
                 name="images"
-                accept="image/*"
+                accept=".jpeg,.jpg,.png"
                 multiple
                 onChange={handleImageChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <p className="text-sm text-gray-500 mt-1">
-                You can select multiple images. Supported formats: JPG, PNG,
-                GIF, WebP
+                You can select multiple images. Supported formats: JPEG, PNG
+                only.
               </p>
 
               {/* Image Previews */}

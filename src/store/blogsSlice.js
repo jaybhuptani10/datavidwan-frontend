@@ -6,8 +6,9 @@ export const fetchBlogs = createAsyncThunk(
   "blogs/fetchBlogs",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/blogs");
-      return response.data.data;
+      const response = await axios.get("/blog");
+      console.log("Blogs response:", response.data.data);
+      return response.data.data.docs;
     } catch (err) {
       return rejectWithValue(err.message);
     }

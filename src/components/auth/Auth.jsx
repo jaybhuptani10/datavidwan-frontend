@@ -1,23 +1,22 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchUserProfile } from "../../store/userSlice";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function AuthPage() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState({ text: "", type: "" });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-
-  const showMessage = (text, type = "success") => {
-    setMessage({ text, type });
-    setTimeout(() => setMessage({ text: "", type: "" }), 5000);
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,7 +34,6 @@ export default function AuthPage() {
       password: "",
       confirmPassword: "",
     });
-    setMessage({ text: "", type: "" });
   };
 
   const handleSubmit = async () => {
@@ -43,17 +41,26 @@ export default function AuthPage() {
 
     if (!isLoginMode) {
       if (password !== confirmPassword) {
-        showMessage("Passwords do not match", "error");
+        toast.error("Passwords do not match", {
+          position: "top-center",
+          autoClose: 4000,
+        });
         return;
       }
       if (!name.trim()) {
-        showMessage("Please enter your full name", "error");
+        toast.error("Please enter your full name", {
+          position: "top-center",
+          autoClose: 4000,
+        });
         return;
       }
     }
 
     if (!email || !password) {
-      showMessage("Please fill in all required fields", "error");
+      toast.error("Please fill in all required fields", {
+        position: "top-center",
+        autoClose: 4000,
+      });
       return;
     }
 
@@ -78,21 +85,39 @@ export default function AuthPage() {
       }
 
       if (response && response.status >= 200 && response.status < 300) {
-        showMessage(
+        toast.success(
           isLoginMode
             ? "Successfully signed in!"
             : "Account created successfully!",
-          "success"
+          { position: "top-center", autoClose: 4000 }
         );
         console.log("Auth successful:", data);
         if (isLoginMode) {
-          setTimeout(() => navigate("/"), 1000);
+          // Store token if present in response
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+            axios.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${data.token}`;
+          }
+          // Fetch user profile and store in Redux after login, then redirect
+          dispatch(fetchUserProfile())
+            .unwrap()
+            .then(() => {
+              navigate("/");
+            });
         }
       } else {
-        showMessage(data.message || "Authentication failed", "error");
+        toast.error(data.message || "Authentication failed", {
+          position: "top-center",
+          autoClose: 4000,
+        });
       }
     } catch (error) {
-      showMessage("Network error. Please try again.", "error");
+      toast.error("Network error. Please try again.", {
+        position: "top-center",
+        autoClose: 4000,
+      });
       console.error("Auth error:", error);
     } finally {
       setIsLoading(false);
@@ -111,6 +136,7 @@ export default function AuthPage() {
 
       {/* Auth Container */}
       <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-3xl shadow-2xl p-8 w-full max-w-md relative z-10 border border-white border-opacity-20">
+        <ToastContainer />
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
@@ -120,19 +146,6 @@ export default function AuthPage() {
             {isLoginMode ? "Sign in to your account" : "Join us today"}
           </p>
         </div>
-
-        {/* Message Display */}
-        {message.text && (
-          <div
-            className={`mb-6 p-3 rounded-lg text-center text-sm ${
-              message.type === "success"
-                ? "bg-green-100 text-green-700 border border-green-200"
-                : "bg-red-100 text-red-700 border border-red-200"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
 
         {/* Form */}
         <div className="space-y-4">

@@ -10,10 +10,11 @@ import ContactSection from "./ContactSection";
 
 import BlogsSection from "./BlogsSection";
 import Footer from "./Footer";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [animateGraph, setAnimateGraph] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     // Trigger graph animation after component mount
     setAnimateGraph(true);
@@ -150,6 +151,7 @@ const Home = () => {
                 scale: 1.05,
                 boxShadow: "0 10px 25px -5px rgba(0, 201, 219, 0.4)",
               }}
+              onClick={() => navigate("/services")}
               whileTap={{ scale: 0.95 }}
             >
               EXPLORE SOLUTIONS

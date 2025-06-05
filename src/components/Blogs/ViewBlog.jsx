@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getBlogById } from "./Blog";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchBlogs } from "../../store/blogsSlice";
 
 const ViewBlog = () => {
   const { blogId } = useParams();
+  const dispatch = useDispatch();
+  const blogs = useSelector((state) => state.blogs.items);
+  const blogsLoading = useSelector((state) => state.blogs.loading);
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState([]);
@@ -11,60 +15,35 @@ const ViewBlog = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Simulate fetching blog data with a short delay
-    const fetchBlog = async () => {
-      setLoading(true);
-      try {
-        // In a real app, this would be an API call
-        // For now, we're using our local data function
-        const blogData = getBlogById(blogId);
+    setLoading(true);
+    let foundBlog = null;
+    if (Array.isArray(blogs)) {
+      foundBlog = blogs.find(
+        (b) => b._id === blogId || b.id === blogId || b.id === parseInt(blogId)
+      );
+    }
+    if (foundBlog) {
+      setBlog(foundBlog);
+      setLoading(false);
+    } else if (!blogsLoading) {
+      // If not found and not already loading, fetch blogs
+      dispatch(fetchBlogs());
+      setLoading(false); // Will re-render when blogs update
+    } else {
+      setLoading(blogsLoading);
+    }
+  }, [blogId, blogs, blogsLoading, dispatch]);
 
-        // Add a delay to simulate network request
-        await new Promise((resolve) => setTimeout(resolve, 300));
-
-        if (blogData) {
-          setBlog({
-            ...blogData,
-            content: `This is the full content of the blog post about ${blogData.title}. In a real application, this would be fetched from a database or API.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquet nisl, eget aliquet nisl nisl eget nisl.
-
-Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`,
-          });
-
-          // Simulate fetching comments
-          setComments([
-            {
-              id: 1,
-              name: "John Doe",
-              date: "May 15, 2025",
-              content:
-                "Great article! I really enjoyed reading this perspective.",
-              avatar:
-                "https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            },
-            {
-              id: 2,
-              name: "Jane Smith",
-              date: "May 16, 2025",
-              content:
-                "This was very informative. I'd love to see a follow-up article that explores this topic in more depth.",
-              avatar:
-                "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            },
-          ]);
-        }
-      } catch (error) {
-        console.error("Error fetching blog:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlog();
-  }, [blogId]);
+  // Redirect or show message if not logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Please login to view this blog post.");
+    }
+  }, []);
 
   const handleSubmitComment = (e) => {
     e.preventDefault();
@@ -96,6 +75,27 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mi
     setEmail("");
     setShowCommentForm(false);
   };
+
+  if (error === "Please login to view this blog post.") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white p-8 rounded-lg shadow text-center">
+          <h2 className="text-2xl font-bold text-gray-700 mb-4">
+            Please Login
+          </h2>
+          <p className="text-gray-600 mb-6">
+            You must be logged in to view this blog post.
+          </p>
+          <Link
+            to="/auth"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -133,7 +133,7 @@ Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mi
           </Link>
 
           <img
-            src={blog.coverImage}
+            src={blog.images[0]}
             alt={blog.title}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />

@@ -7,6 +7,7 @@ import {
   MapPin,
   ArrowRight,
 } from "lucide-react";
+import axios from "axios";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,9 @@ export default function ContactPage() {
     subject: "",
     message: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,11 +28,23 @@ export default function ContactPage() {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log("Form submitted:", formData);
-    // Here you would normally send the data to your backend
-    alert("Form submitted successfully!");
-    setFormData({ name: "", email: "", subject: "", message: "" });
+  const handleSubmit = async (e) => {
+    e.preventDefault && e.preventDefault();
+    setLoading(true);
+    setSuccess("");
+    setError("");
+    try {
+      await axios.post("/contactus", formData);
+      setSuccess("Your message has been sent!");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "Failed to send message. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -194,9 +210,24 @@ export default function ContactPage() {
               <button
                 onClick={handleSubmit}
                 className="w-full bg-gradient-to-r from-indigo-600 to-blue-700 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center gap-2 hover:from-indigo-700 hover:to-blue-800 transition duration-300 shadow-md"
+                disabled={loading}
               >
-                Submit Request <Send size={18} />
+                {loading ? (
+                  "Submitting..."
+                ) : (
+                  <>
+                    Submit Request <Send size={18} />
+                  </>
+                )}
               </button>
+              {success && (
+                <div className="mt-4 text-green-600 font-semibold">
+                  {success}
+                </div>
+              )}
+              {error && (
+                <div className="mt-4 text-red-600 font-semibold">{error}</div>
+              )}
             </div>
 
             <div className="mt-8 pt-6 border-t border-gray-200 text-center text-gray-600">

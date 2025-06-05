@@ -2,35 +2,56 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBlogs } from "../../store/blogsSlice";
+import axios from "axios";
 
 const MyBlogs = () => {
   const dispatch = useDispatch();
   const { items: allBlogs, loading } = useSelector((state) => state.blogs);
   const [myBlogs, setMyBlogs] = useState([]);
+  console.log("My Blogs:", myBlogs);
 
   useEffect(() => {
     dispatch(fetchBlogs());
   }, [dispatch]);
 
   useEffect(() => {
-    // In a real app, filter by user ID. For now, use all blogs.
-    setMyBlogs(allBlogs);
-  }, [allBlogs]);
+    // Fetch only the current user's blogs from the backend
+    const fetchMyBlogs = async () => {
+      try {
+        const response = await axios.get("/blog/user", {
+          withCredentials: true,
+        });
+        setMyBlogs(
+          Array.isArray(response.data?.data) ? response.data.data : []
+        );
+      } catch (error) {
+        console.error("Error fetching my blogs:", error);
+        setMyBlogs([]);
+      }
+    };
+    fetchMyBlogs();
+  }, []);
 
   const handleDeleteBlog = async (blogId) => {
     if (window.confirm("Are you sure you want to delete this blog post?")) {
       try {
-        // In a real app, this would be an API call
-        console.log(`Deleting blog with ID: ${blogId}`);
-
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        // Update local state
-        setMyBlogs(myBlogs.filter((blog) => blog.id !== blogId));
+        const response = await axios.delete(`/blog/user/${blogId}`, {
+          withCredentials: true,
+        });
+        if (response.status !== 200 && response.status !== 204) {
+          const msg =
+            response.data?.message || `HTTP error! status: ${response.status}`;
+          alert(msg);
+          return;
+        }
+        setMyBlogs(myBlogs.filter((blog) => blog._id !== blogId));
       } catch (error) {
         console.error("Error deleting blog:", error);
-        alert("Failed to delete blog post. Please try again.");
+        alert(
+          error.response?.data?.message ||
+            error.message ||
+            "Failed to delete blog post. Please try again."
+        );
       }
     }
   };
@@ -112,13 +133,13 @@ const MyBlogs = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {myBlogs.map((blog) => (
-                    <tr key={blog.id} className="hover:bg-gray-50">
+                    <tr key={blog._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0 mr-3">
                             <img
                               className="h-10 w-10 rounded-full object-cover"
-                              src={blog.coverImage}
+                              src={blog.images[0]}
                               alt=""
                             />
                           </div>
@@ -144,16 +165,13 @@ const MyBlogs = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <Link
-                          to={`/blog/${blog.id}`}
+                          to={`/blog/${blog._id}`}
                           className="text-blue-600 hover:text-blue-900 mr-4"
                         >
                           View
                         </Link>
-                        <button className="text-indigo-600 hover:text-indigo-900 mr-4">
-                          Edit
-                        </button>
                         <button
-                          onClick={() => handleDeleteBlog(blog.id)}
+                          onClick={() => handleDeleteBlog(blog._id)}
                           className="text-red-600 hover:text-red-900"
                         >
                           Delete

@@ -4,6 +4,7 @@ import imagesReducer from "./imagesSlice";
 import testimonialsReducer from "./testimonialsSlice";
 import coursesReducer from "./coursesSlice";
 import blogsReducer from "./blogsSlice";
+import userReducer from "./userSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     testimonials: testimonialsReducer,
     courses: coursesReducer,
     blogs: blogsReducer,
+    user: userReducer,
   },
 });
 

@@ -14,9 +14,11 @@ import logo from "../assets/logo.jpg";
 import Footer from "./Home/Footer";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTestimonials } from "../store/testimonialsSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function AboutUs() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     items: testimonials,
     loading: testimonialsLoading,
@@ -61,10 +63,16 @@ export default function AboutUs() {
               decisions and achieve sustainable growth.
             </p>
             <div className="pt-4 flex space-x-4">
-              <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center">
+              <button
+                onClick={() => navigate("/services")}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center cursor-pointer"
+              >
                 Our Services <ChevronRight className="ml-2 h-4 w-4" />
               </button>
-              <button className="bg-white border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-6 py-3 rounded-lg font-medium transition-colors">
+              <button
+                onClick={() => navigate("/contact")}
+                className="bg-white border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-6 py-3 rounded-lg font-medium transition-colors cursor-pointer"
+              >
                 Contact Us
               </button>
             </div>
@@ -382,10 +390,16 @@ export default function AboutUs() {
                   goals and stay ahead in today's competitive landscape.
                 </p>
                 <div className="flex flex-wrap gap-4">
-                  <button className="bg-white text-indigo-700 hover:bg-teal-50 px-8 py-3 rounded-lg font-medium transition-colors shadow-lg">
+                  <button
+                    onClick={() => navigate("/contact")}
+                    className="bg-white text-indigo-700 hover:bg-teal-50 px-8 py-3 rounded-lg font-medium transition-colors shadow-lg cursor-pointer"
+                  >
                     Contact Us Today
                   </button>
-                  <button className="bg-teal-500 hover:bg-teal-600 text-white border-2 border-teal-400 px-8 py-3 rounded-lg font-medium transition-colors">
+                  <button
+                    onClick={() => navigate("/courses")}
+                    className="bg-teal-500 hover:bg-teal-600 text-white border-2 border-teal-400 px-8 py-3 rounded-lg font-medium transition-colors cursor-pointer"
+                  >
                     View Our Courses
                   </button>
                 </div>

@@ -5,6 +5,7 @@ import { fetchBlogs } from "../../store/blogsSlice";
 
 // Helper function to get a blog by ID
 export const getBlogById = (blogs, id) => {
+  if (!Array.isArray(blogs)) return undefined;
   return blogs.find((blog) => blog.id === id || blog.id === parseInt(id));
 };
 
@@ -25,20 +26,26 @@ const Blog = () => {
   // Extract unique categories for the filter
   const categories = [
     "All",
-    ...new Set((blogPosts || []).map((post) => post.category)),
+    ...new Set(
+      Array.isArray(blogPosts) ? blogPosts.map((post) => post.category) : []
+    ),
   ];
 
   // Filter blogs based on search term and category
-  const filteredBlogs = (blogPosts || []).filter((blog) => {
-    const matchesSearch =
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "" ||
-      selectedCategory === "All" ||
-      blog.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredBlogs = (Array.isArray(blogPosts) ? blogPosts : []).filter(
+    (blog) => {
+      const matchesSearch =
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (blog.excerpt || blog.exerpt || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "" ||
+        selectedCategory === "All" ||
+        blog.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    }
+  );
 
   return (
     <div className="bg-gray-50 min-h-screen py-8 pt-30">
@@ -106,12 +113,12 @@ const Blog = () => {
           {!loading && !error && filteredBlogs.length > 0
             ? filteredBlogs.map((blog) => (
                 <Link
-                  key={blog.id}
-                  to={`/blog/${blog.id}`}
+                  key={blog._id}
+                  to={`/blog/${blog._id}`}
                   className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
                 >
                   <img
-                    src={blog.coverImage}
+                    src={blog.images[0]}
                     alt={blog.title}
                     className="w-full h-48 object-cover"
                   />
@@ -125,7 +132,7 @@ const Blog = () => {
                     <p className="text-gray-600 mb-4">{blog.excerpt}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-500">
-                        By {blog.author}
+                        By {blog.writer}
                       </span>
                       <span className="text-sm text-gray-500">{blog.date}</span>
                     </div>

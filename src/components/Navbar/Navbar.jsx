@@ -1,8 +1,14 @@
 import React, { use, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom"; // Import Link and useLocation
 import logo from "../../assets/logo-2.jpg";
-import { FaAngleDown, FaBars, FaTimes } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaAngleDown,
+  FaBars,
+  FaTimes,
+  FaUser,
+  FaSignOutAlt,
+} from "react-icons/fa";
+import { motion, AnimatePresence, removeItem } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCourses } from "../../store/coursesSlice";
 import { fetchServices } from "../../store/servicesSlice";
@@ -12,10 +18,14 @@ const Navbar = () => {
   const [showServices, setShowServices] = useState(false);
   const [showCourses, setShowCourses] = useState(false);
   const [showBlogs, setShowBlogs] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showMobileUserDropdown, setShowMobileUserDropdown] = useState(false);
   const location = useLocation(); // Get the current route
   const services = useSelector((state) => state.services.items);
   const courses = useSelector((state) => state.courses.items);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.profile);
+  console.log("User Profile:", user);
 
   // Fetch courses if not already loaded
   React.useEffect(() => {
@@ -33,6 +43,18 @@ const Navbar = () => {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    // dispatch(logout());
+    setShowUserDropdown(false);
+    setShowMobileUserDropdown(false);
+    setMenuOpen(false);
+    console.log("Logout functionality to be implemented");
+    localStorage.removeItem("token"); // Clear token from local storage
+    window.location.reload(); // Reload the page to reflect changes
+  };
+
   // Animation variants for mobile menu
   const menuVariants = {
     closed: {
@@ -271,18 +293,69 @@ const Navbar = () => {
           </li>
         </ul>
 
-        {/* Quote Button (Desktop) */}
+        {/* Desktop User Section */}
         <div className="hidden md:block ml-6">
-          <motion.button
-            className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white font-semibold py-2 px-5 rounded-full shadow-lg"
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 0 15px rgba(20, 184, 166, 0.5)",
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            GET A QUOTE
-          </motion.button>
+          {user ? (
+            <div className="relative">
+              <motion.div
+                className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white font-semibold py-2 px-5 rounded-full shadow-lg flex items-center cursor-pointer hover:from-cyan-600 hover:to-teal-500 transition-all duration-300"
+                onClick={() => setShowUserDropdown(!showUserDropdown)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FaUser className="mr-2 text-sm" />
+                <span className="mr-2">
+                  {user.name || user.username || user.email}
+                </span>
+                <FaAngleDown
+                  className={`ml-1 text-sm transition-transform duration-300 ${
+                    showUserDropdown ? "rotate-180" : ""
+                  }`}
+                />
+              </motion.div>
+
+              <AnimatePresence>
+                {showUserDropdown && (
+                  <motion.div
+                    className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2"
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm text-gray-600">Signed in as</p>
+                      <p className="font-semibold text-gray-800 truncate">
+                        {user.name || user.username || user.email}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center"
+                    >
+                      <FaSignOutAlt className="mr-2 text-sm" />
+                      Logout
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <Link
+                to="/auth"
+                className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white font-semibold py-2.5 px-6 rounded-full shadow-lg hover:from-cyan-600 hover:to-teal-500 transition-all duration-300 hover:shadow-xl"
+              >
+                Login
+              </Link>
+              <Link
+                to="/auth"
+                className="bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-semibold py-2.5 px-6 rounded-full shadow-lg hover:from-teal-500 hover:to-cyan-600 transition-all duration-300 hover:shadow-xl"
+              >
+                Register
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Hamburger Menu Button (Mobile) */}
@@ -334,6 +407,84 @@ const Navbar = () => {
               </motion.button>
             </motion.div>
 
+            {/* Mobile User Section */}
+            {user && (
+              <motion.div
+                className="mb-6 bg-gradient-to-r from-cyan-600/20 to-teal-600/20 rounded-xl p-4 border border-cyan-500/30"
+                variants={menuItemVariants}
+              >
+                <motion.button
+                  onClick={() =>
+                    setShowMobileUserDropdown(!showMobileUserDropdown)
+                  }
+                  className="flex items-center justify-between w-full text-white"
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="flex items-center">
+                    <div className="bg-gradient-to-r from-cyan-500 to-teal-400 rounded-full p-2 mr-3">
+                      <FaUser className="text-white text-sm" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm text-cyan-300">Welcome back</p>
+                      <p className="font-semibold text-white truncate">
+                        {user.name || user.username || user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <motion.div
+                    animate={{ rotate: showMobileUserDropdown ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <FaAngleDown className="text-cyan-400" />
+                  </motion.div>
+                </motion.button>
+
+                <AnimatePresence>
+                  {showMobileUserDropdown && (
+                    <motion.div
+                      className="mt-4 pt-4 border-t border-cyan-500/30"
+                      variants={dropdownVariants}
+                      initial="closed"
+                      animate="open"
+                      exit="closed"
+                    >
+                      <motion.button
+                        onClick={handleLogout}
+                        className="flex items-center w-full text-red-400 hover:text-red-300 transition-colors duration-200"
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <FaSignOutAlt className="mr-2 text-sm" />
+                        Logout
+                      </motion.button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+
+            {/* Mobile Login/Register for non-authenticated users */}
+            {!user && (
+              <motion.div
+                className="mb-6 space-y-3"
+                variants={menuItemVariants}
+              >
+                <Link
+                  to="/auth"
+                  onClick={() => setMenuOpen(false)}
+                  className="block w-full bg-gradient-to-r from-cyan-500 to-teal-400 text-white font-semibold py-3 px-6 rounded-full shadow-lg text-center hover:from-cyan-600 hover:to-teal-500 transition-all duration-300"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/auth"
+                  onClick={() => setMenuOpen(false)}
+                  className="block w-full bg-gradient-to-r from-teal-400 to-cyan-500 text-white font-semibold py-3 px-6 rounded-full shadow-lg text-center hover:from-teal-500 hover:to-cyan-600 transition-all duration-300"
+                >
+                  Register
+                </Link>
+              </motion.div>
+            )}
+
             {/* Menu Items */}
             <ul className="space-y-5 font-semibold text-lg">
               <motion.li
@@ -342,7 +493,9 @@ const Navbar = () => {
                 } cursor-pointer`}
                 variants={menuItemVariants}
               >
-                <Link to="/">Home</Link>
+                <Link to="/" onClick={() => setMenuOpen(false)}>
+                  Home
+                </Link>
               </motion.li>
 
               <motion.li
@@ -353,7 +506,9 @@ const Navbar = () => {
                 } transition-colors duration-300 cursor-pointer`}
                 variants={menuItemVariants}
               >
-                <Link to="/about">About Us</Link>
+                <Link to="/about" onClick={() => setMenuOpen(false)}>
+                  About Us
+                </Link>
               </motion.li>
 
               {/* Services dropdown */}
@@ -389,6 +544,10 @@ const Navbar = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
+                            onClick={() => {
+                              setMenuOpen(false);
+                              navigate(`/services/${service.name}`);
+                            }}
                           >
                             {service.name}
                           </motion.li>
@@ -434,6 +593,10 @@ const Navbar = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
+                            onClick={() => {
+                              setMenuOpen(false);
+                              navigate(`/courses/${course.title}`);
+                            }}
                           >
                             {course.title}
                           </motion.li>
@@ -502,7 +665,9 @@ const Navbar = () => {
                 } transition-colors duration-300 cursor-pointer`}
                 variants={menuItemVariants}
               >
-                <Link to="/gallery">Gallery</Link>
+                <Link to="/gallery" onClick={() => setMenuOpen(false)}>
+                  Gallery
+                </Link>
               </motion.li>
 
               <motion.li
@@ -513,7 +678,9 @@ const Navbar = () => {
                 } transition-colors duration-300 cursor-pointer`}
                 variants={menuItemVariants}
               >
-                <Link to="/contact">Contact Us</Link>
+                <Link to="/contact" onClick={() => setMenuOpen(false)}>
+                  Contact Us
+                </Link>
               </motion.li>
 
               <motion.li variants={menuItemVariants}>
