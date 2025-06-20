@@ -157,7 +157,7 @@ export default function AuthPage() {
           response = await axios.post(
             "/user/login",
             { email, password },
-            { withCredentials: true }
+            { withCredentials: true,  validateStatus: () => true }
           );
         } catch (error) {
           throw error;
