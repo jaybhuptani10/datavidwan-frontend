@@ -1,6 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { fetchUserProfile } from "../../store/userSlice";
+import { useDispatch } from "react-redux";
+
 
 export default function AuthPage() {
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -17,6 +20,7 @@ export default function AuthPage() {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const showNotification = (message, type = "success") => {
     const id = Date.now();
@@ -100,11 +104,13 @@ export default function AuthPage() {
         { email, otp },
         { withCredentials: true }
       );
+      showNotification("Account verified! Please login.", "success");
 
       // Save token if returned (treat as login after verification)
       const token = response.data?.token;
       if (token) {
         localStorage.setItem("token", token);
+        dispatch(fetchUserProfile());
         showNotification("Account verified and logged in!", "success");
         setTimeout(() => {
           navigate("/");
@@ -146,22 +152,43 @@ export default function AuthPage() {
     try {
       if (isLoginMode) {
         // Real API call to /user/login
-        const response = await axios.post(
-          "/user/login",
-          { email, password },
-          { withCredentials: true }
-        );
-
-        // Save token if returned
-        const token = response.data?.token;
-        if (token) {
-          localStorage.setItem("token", token);
+        let response
+        try{
+          response = await axios.post(
+            "/user/login",
+            { email, password },
+            { withCredentials: true,  validateStatus: () => true }
+          );
+        } catch (error) {
+          throw error;
         }
-
-        showNotification("Successfully signed in!", "success");
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+        if (response.status === 300){
+          showNotification(
+            "Account not Verified. OTP sent to your email. Please Verify",
+            "info"
+          );
+          setShowOTPVerification(true);
+          startOtpTimer();
+        }
+        else if (response.status >= 200 && response.status < 300) {
+          // Save token if returned
+          const token = response.data?.token;
+          if (token) {
+            localStorage.setItem("token", token);
+            dispatch(fetchUserProfile());
+            showNotification("Successfully signed in!", "success");
+            setTimeout(() => {
+              navigate("/");
+            }, 1000);
+          } else {
+            showNotification("Login Failed, no token received.", "error");
+          }
+        } else {
+          showNotification(
+            response.data?.message || "Login failed",
+            "error"
+          );
+        }
       } else {
         // Real API call to /user/register
         const response = await axios.post(
@@ -170,27 +197,20 @@ export default function AuthPage() {
           { withCredentials: true }
         );
 
-        // Save token if returned (auto-login after registration)
-        const token = response.data?.token;
-        if (token) {
-          localStorage.setItem("token", token);
-          showNotification(
-            "Registration successful! You are now logged in.",
-            "success"
-          );
-          setTimeout(() => {
-            navigate("/");
-          }, 1000);
-        } else {
-          showNotification(
-            "Registration successful! Please verify your email with OTP.",
-            "success"
-          );
+        if (response.status>=200 && response.status<300){
+          showNotification("Please verify your email to complete registraion.","success");
           setShowOTPVerification(true);
           startOtpTimer();
         }
+        else{
+          showNotification(
+            response.data?.message || "Registration Failed. Please try again.",
+            "error"
+          )
+        }
       }
     } catch (error) {
+      console.error("Error during authentication:", error);
       showNotification(
         error.response?.data?.message || "Network error. Please try again.",
         "error"
